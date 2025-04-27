@@ -3,34 +3,43 @@
 <head>
     <title>Eclipse Knight</title>
     <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+    <!-- Интро видео -->
     <div id="introScreen">
-        <img src="assets/backgrounds/intro_background.png" class="intro-slide">
-        <img src="assets/ui/skip_button.png" id="skipIntro" class="menu-button">
+        <video id="introVideo" muted>
+            <source src="assets/videos/intro_video.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+        <button id="skipIntro">Пропустить</button>
     </div>
 
+    <!-- Главное меню -->
     <div id="mainMenu" class="hidden">
         <input type="text" id="playerName" placeholder="Введите ваш ник">
-        <img src="assets/ui/play_button.png" id="startGame" class="menu-button">
+        <div class="menu-buttons">
+            <img src="assets/ui/play_button.png" id="startGame" class="menu-button">
+            <img src="assets/ui/leaderboard_button.png" id="showLeaderboard" class="menu-button">
+        </div>
     </div>
 
+    <!-- Игровой экран -->
     <div id="gameScreen" class="hidden">
         <canvas id="gameCanvas"></canvas>
         <div id="ui">
-            <div id="health">
-                <img src="assets/ui/heart_icon.png" class="heart">
-                <img src="assets/ui/heart_icon.png" class="heart">
-                <img src="assets/ui/heart_icon.png" class="heart">
-            </div>
+            <div id="health"></div>
             <div id="score">Убито: 0</div>
         </div>
     </div>
 
+    <!-- Экран смерти -->
     <div id="deathScreen" class="hidden">
         <h2>Игрок: <span id="finalName"></span></h2>
         <p>Убито врагов: <span id="finalScore">0</span></p>
-        <img src="assets/ui/newgame_button.png" id="newGame" class="menu-button">
+        <div class="menu-buttons">
+            <img src="assets/ui/newgame_button.png" id="newGame" class="menu-button">
+        </div>
     </div>
 
     <audio id="attackSound">
