@@ -23,7 +23,7 @@ body {
 }
 
 #intro-screen {
-    background: url('assets/backgrounds/intro_background.jpg') no-repeat center center;
+    background: url('backgrounds/intro_background.jpg') no-repeat center center;
     background-size: cover;
 }
 

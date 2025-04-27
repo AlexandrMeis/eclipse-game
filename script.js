@@ -99,4 +99,13 @@ restartBtn.addEventListener("click", function() {
 });
 
 // Начать игру
-document.getElementById("start-btn").onclick = startGame;
+// Запуск игры
+document.getElementById("start-btn").addEventListener("click", startGame);
+
+function startGame() {
+    document.getElementById("intro-screen").classList.add("hidden");
+    document.getElementById("game-screen").classList.remove("hidden");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    updateGameArea();
+}
