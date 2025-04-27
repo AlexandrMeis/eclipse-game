@@ -6,27 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <!-- Видео интро -->
     <div id="introScreen">
         <video id="introVideo" muted>
             <source src="assets/videos/intro_video.mp4" type="video/mp4">
         </video>
-        <button id="skipIntro">Пропустить ▶</button>
+        <button id="skipIntro">▶ Пропустить</button>
     </div>
 
-    <!-- Главное меню -->
     <div id="mainMenu" class="hidden">
         <input type="text" id="playerName" placeholder="Введите ваш ник">
         <img src="assets/ui/play_button.png" id="startGame" class="menu-button">
     </div>
 
-    <!-- Прелоадер -->
     <div id="preloader" class="hidden">
         <div id="loadingBar"></div>
         <div id="countdown">5</div>
     </div>
 
-    <!-- Игровой экран -->
     <div id="gameScreen" class="hidden">
         <canvas id="gameCanvas"></canvas>
         <div id="ui">
@@ -35,20 +31,14 @@
         </div>
     </div>
 
-    <!-- Экран смерти -->
     <div id="deathScreen" class="hidden">
         <h2>Игрок: <span id="finalName"></span></h2>
         <p>Убито врагов: <span id="finalScore">0</span></p>
         <img src="assets/ui/newgame_button.png" id="newGame" class="menu-button">
     </div>
 
-    <!-- Аудио -->
-    <audio id="attackSound">
-        <source src="assets/audio/attack_sound.wav" type="audio/wav">
-    </audio>
-    <audio id="jumpSound">
-        <source src="assets/audio/jump_sound.wav" type="audio/wav">
-    </audio>
+    <audio id="attackSound" src="assets/audio/attack_sound.wav"></audio>
+    <audio id="jumpSound" src="assets/audio/jump_sound.wav"></audio>
 
     <script src="script.js"></script>
 </body>
