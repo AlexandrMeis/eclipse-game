@@ -5,25 +5,31 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Интро видео -->
+    <!-- Интро с фоновым изображением -->
     <div id="introScreen">
+        <img src="assets/backgrounds/intro_background.png" class="intro-slide">
         <video id="introVideo" muted>
             <source src="assets/videos/intro_video.mp4" type="video/mp4">
         </video>
-        <button id="skipIntro">Skip</button>
+        <img src="assets/ui/skip_button.png" id="skipIntro" class="menu-button">
     </div>
 
     <!-- Главное меню -->
     <div id="mainMenu" class="hidden">
         <input type="text" id="playerName" placeholder="Введите ваш ник">
-        <button id="startGame">Играть</button>
+        <img src="assets/ui/play_button.png" id="startGame" class="menu-button">
+        <img src="assets/ui/leaderboard_button.png" class="menu-button">
     </div>
 
-    <!-- Игровой интерфейс -->
+    <!-- Игровой экран -->
     <div id="gameScreen" class="hidden">
         <canvas id="gameCanvas"></canvas>
         <div id="ui">
-            <div id="health">❤️❤️❤️</div>
+            <div id="health">
+                <img src="assets/ui/heart_icon.png" class="heart">
+                <img src="assets/ui/heart_icon.png" class="heart">
+                <img src="assets/ui/heart_icon.png" class="heart">
+            </div>
             <div id="score">Убито: 0</div>
         </div>
     </div>
@@ -32,12 +38,20 @@
     <div id="deathScreen" class="hidden">
         <h2>Игрок: <span id="finalName"></span></h2>
         <p>Убито врагов: <span id="finalScore">0</span></p>
-        <button id="newGame">Новая игра</button>
+        <img src="assets/ui/newgame_button.png" id="newGame" class="menu-button">
         <div id="leaderboard">
             <h3>Лидерборд</h3>
             <ol id="scoresList"></ol>
         </div>
     </div>
+
+    <!-- Аудио -->
+    <audio id="attackSound">
+        <source src="assets/audio/attack_sound.wav" type="audio/wav">
+    </audio>
+    <audio id="jumpSound">
+        <source src="assets/audio/jump_sound.wav" type="audio/wav">
+    </audio>
 
     <script src="script.js"></script>
 </body>
