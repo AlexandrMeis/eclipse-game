@@ -5,47 +5,34 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Интро с фоновым изображением -->
     <div id="introScreen">
-        <img src="assets/backgrounds/intro_background.jpg" class="intro-slide">
-        <video id="introVideo" muted>
-            <source src="assets/videos/intro_video.mp4" type="video/mp4">
-        </video>
+        <img src="assets/backgrounds/intro_background.png" class="intro-slide">
         <img src="assets/ui/skip_button.png" id="skipIntro" class="menu-button">
     </div>
 
-    <!-- Главное меню -->
     <div id="mainMenu" class="hidden">
         <input type="text" id="playerName" placeholder="Введите ваш ник">
         <img src="assets/ui/play_button.png" id="startGame" class="menu-button">
-        <img src="assets/ui/leaderboard_button.png" class="menu-button">
     </div>
 
-    <!-- Игровой экран -->
     <div id="gameScreen" class="hidden">
         <canvas id="gameCanvas"></canvas>
         <div id="ui">
             <div id="health">
-                <img src="assets/ui/heart.png" class="heart">
-                <img src="assets/ui/heart.png" class="heart">
-                <img src="assets/ui/heart.png" class="heart">
+                <img src="assets/ui/heart_icon.png" class="heart">
+                <img src="assets/ui/heart_icon.png" class="heart">
+                <img src="assets/ui/heart_icon.png" class="heart">
             </div>
             <div id="score">Убито: 0</div>
         </div>
     </div>
 
-    <!-- Экран смерти -->
     <div id="deathScreen" class="hidden">
         <h2>Игрок: <span id="finalName"></span></h2>
         <p>Убито врагов: <span id="finalScore">0</span></p>
         <img src="assets/ui/newgame_button.png" id="newGame" class="menu-button">
-        <div id="leaderboard">
-            <h3>Лидерборд</h3>
-            <ol id="scoresList"></ol>
-        </div>
     </div>
 
-    <!-- Аудио -->
     <audio id="attackSound">
         <source src="assets/audio/attack_sound.wav" type="audio/wav">
     </audio>
