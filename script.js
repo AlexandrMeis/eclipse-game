@@ -1,7 +1,7 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-canvas.width = 1024;
-canvas.height = 768;
+canvas.width = 1920;
+canvas.height = 1080;
 
 // Состояние игры
 let gameState = {
@@ -49,7 +49,7 @@ images.knightJump.src = 'assets/characters/knight_jump.png';
 images.fudder.src = 'assets/characters/fudder_enemy.png';
 images.sybil.src = 'assets/characters/sybil_enemy.png';
 images.farmer.src = 'assets/characters/farmer_enemy.png';
-images.background.src = 'assets/backgrounds/game_background.png';
+images.background.src = 'assets/backgrounds/game_background.jpg';
 images.stone.src = 'assets/objects/stone_platform.png';
 images.jump.src = 'assets/objects/jump_platform.png';
 

@@ -57,7 +57,7 @@ body {
 
 /* Игровой экран */
 #gameCanvas {
-    background: url('assets/backgrounds/game_background.png') no-repeat center/cover;
+    background: url('assets/backgrounds/game_background.jpg') no-repeat center/cover;
 }
 
 #ui {
