@@ -1,95 +1,88 @@
-/* Стиль для страницы */
 body {
     margin: 0;
-    padding: 0;
+    overflow: hidden;
     font-family: 'Arial', sans-serif;
-    background-color: #000;
 }
 
-/* Стили для экранов */
-.screen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
+#introScreen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+#skipIntro {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.3);
+    border: none;
+    color: white;
+    cursor: pointer;
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
-#intro-screen {
-    background: url('backgrounds/intro_background.jpg') no-repeat center center;
-    background-size: cover;
-}
-
-#intro-text {
-    text-align: center;
-    color: white;
-}
-
-#start-btn {
-    background-color: #ff8000;
-    color: white;
-    padding: 15px;
-    font-size: 18px;
-    cursor: pointer;
-    border: none;
-    margin-top: 20px;
-}
-
-/* Игровой экран */
-#game-screen {
-    background: url('assets/backgrounds/game_background.jpg') no-repeat center center;
-    background-size: cover;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    position: relative;
-}
-
-#game-ui {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    color: white;
-}
-
-#restart-btn img {
-    width: 100%; /* Устанавливаем, чтобы изображение растягивалось по кнопке */
-    height: auto; /* Поддерживаем пропорции изображения */
-}
-
-/* Лидерборд */
-#leaderboard {
-    margin-top: 30px;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
-	position: absolute;
+#mainMenu {
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+    background: rgba(0,0,0,0.8);
+    padding: 30px;
+    border-radius: 10px;
 }
 
-#leaderboard-list {
-    list-style: none;
-    padding: 0;
+#playerName {
+    display: block;
+    margin: 15px auto;
+    padding: 10px;
+    font-size: 18px;
 }
 
-#leaderboard-list li {
-    padding: 5px;
+button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px;
 }
 
-#startMenu {
-    width: 100%;
-    height: 100vh;
-    background: url('backgrounds/intro_background.jpg') no-repeat center center/cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+#gameCanvas {
+    border: 1px solid #333;
+    background: url('assets/backgrounds/game_background.png');
+}
+
+#ui {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-size: 24px;
+    text-shadow: 2px 2px 2px black;
+}
+
+#deathScreen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.9);
+    color: white;
+    padding: 30px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+#leaderboard {
+    margin-top: 30px;
+    background: rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 5px;
 }

@@ -1,111 +1,156 @@
-// Инициализация переменных
-let canvas = document.getElementById("gameCanvas");
-let ctx = canvas.getContext("2d");
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
-let knight = {
-    x: 100,
-    y: canvas.height - 150,
-    width: 50,
-    height: 100,
-    speed: 5,
-    lives: 3,
-    isJumping: false,
-    isAttacking: false,
-    img: new Image()
+// Размеры холста
+canvas.width = 1024;
+canvas.height = 768;
+
+// Состояние игры
+let gameState = {
+    player: {
+        x: 400,
+        y: 500,
+        width: 60,
+        height: 90,
+        health: 3,
+        score: 0,
+        isAttacking: false
+    },
+    enemies: [],
+    platforms: [
+        {x: 0, y: 600, width: 200, height: 50},
+        {x: 300, y: 500, width: 200, height: 50},
+        {x: 600, y: 400, width: 200, height: 50}
+    ]
 };
 
-knight.img.src = "assets/characters/knight_idle.png";
+// Загрузка изображений
+const images = {
+    knightIdle: new Image(),
+    knightAttack: new Image(),
+    knightJump: new Image(),
+    fudder: new Image(),
+    sybil: new Image(),
+    farmer: new Image()
+};
+
+images.knightIdle.src = 'assets/characters/knight_idle.png';
+images.knightAttack.src = 'assets/characters/knight_attack.png';
+images.knightJump.src = 'assets/characters/knight_jump.png';
+images.fudder.src = 'assets/characters/fudder_enemy.png';
+images.sybil.src = 'assets/characters/sybil_enemy.png';
+images.farmer.src = 'assets/characters/farmer_enemy.png';
 
 // Управление
-let keys = {};
+const keys = {
+    a: false,
+    d: false,
+    w: false
+};
 
-document.addEventListener("keydown", (e) => {
-    keys[e.key] = true;
+// Обработчики событий
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'a') keys.a = true;
+    if (e.key === 'd') keys.d = true;
+    if (e.key === 'w') keys.w = true;
 });
 
-document.addEventListener("keyup", (e) => {
-    keys[e.key] = false;
+document.addEventListener('keyup', (e) => {
+    if (e.key === 'a') keys.a = false;
+    if (e.key === 'd') keys.d = false;
+    if (e.key === 'w') keys.w = false;
 });
 
-// Функция для обновления экрана
-function updateGameArea() {
+canvas.addEventListener('click', () => {
+    if (!gameState.player.isAttacking) {
+        gameState.player.isAttacking = true;
+        setTimeout(() => gameState.player.isAttacking = false, 300);
+    }
+});
+
+// Основной игровой цикл
+function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+function update() {
+    // Движение игрока
+    if (keys.a) gameState.player.x -= 5;
+    if (keys.d) gameState.player.x += 5;
+    
+    // Ограничение границ
+    gameState.player.x = Math.max(0, Math.min(canvas.width - gameState.player.width, gameState.player.x));
+    
+    // Обновление врагов
+    gameState.enemies.forEach(enemy => {
+        enemy.x += enemy.speed;
+        // Простая логика преследования
+        if (enemy.x < gameState.player.x) enemy.speed = 1;
+        else enemy.speed = -1;
+    });
+}
+
+function draw() {
+    // Очистка холста
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Отображаем рыцаря
-    ctx.drawImage(knight.img, knight.x, knight.y, knight.width, knight.height);
+    // Рисование игрока
+    let img = gameState.player.isAttacking ? images.knightAttack : images.knightIdle;
+    ctx.drawImage(img, gameState.player.x, gameState.player.y, 60, 90);
     
-    // Управление движением
-    if (keys["a"]) {
-        knight.x -= knight.speed;
-    }
-    if (keys["d"]) {
-        knight.x += knight.speed;
-    }
-    if (keys["w"] && !knight.isJumping) {
-        knight.isJumping = true;
-        knight.y -= 100;
-    }
-    if (keys[" "]) {
-        knight.isAttacking = true;
-    }
-
-    // Проверка столкновений с врагами и т.д.
-    // Тут добавишь свою логику
-
-    // Переход к следующему кадру
-    requestAnimationFrame(updateGameArea);
+    // Рисование врагов
+    gameState.enemies.forEach(enemy => {
+        ctx.drawImage(images[enemy.type], enemy.x, enemy.y, 50, 50);
+    });
+    
+    // Рисование платформ
+    ctx.fillStyle = '#654321';
+    gameState.platforms.forEach(plat => {
+        ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
+    });
 }
 
-// Запуск игры
-function startGame() {
-    document.getElementById("intro-screen").classList.add("hidden");
-    document.getElementById("game-screen").classList.remove("hidden");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    updateGameArea();
+// Инициализация игры
+function initGame() {
+    // Спавн врагов
+    gameState.enemies = [
+        {x: 100, y: 550, type: 'fudder', speed: 1},
+        {x: 700, y: 450, type: 'sybil', speed: -1},
+        {x: 400, y: 350, type: 'farmer', speed: 1}
+    ];
+    
+    gameState.player.health = 3;
+    gameState.player.score = 0;
+    
+    document.getElementById('health').textContent = '❤️'.repeat(3);
+    document.getElementById('score').textContent = `Убито: 0`;
 }
 
-function endGame() {
-    document.getElementById('leaderboard').style.display = 'block';
-    document.getElementById('scoreDisplay').innerText = "Ты убил " + killCount + " врагов!";
-}
-
-document.getElementById('restartButton').addEventListener('click', function() {
-    window.location.reload(); // перезагрузка страницы для новой игры
+// Обработчики UI
+document.getElementById('startGame').addEventListener('click', () => {
+    const playerName = document.getElementById('playerName').value;
+    if (!playerName) return alert('Введите ник!');
+    
+    document.getElementById('mainMenu').classList.add('hidden');
+    document.getElementById('gameScreen').classList.remove('hidden');
+    initGame();
+    gameLoop();
 });
 
-/ Показываем кнопку старт на начальной заставке
-const startScreen = document.getElementById("start-screen");
-const startBtn = document.getElementById("start-btn");
-
-// При нажатии на кнопку старт скрываем стартовый экран и начинаем игру
-startBtn.addEventListener("click", function() {
-    startScreen.style.display = "none"; // Скрываем экран старта
-    startGame(); // Запускаем игру
+document.getElementById('newGame').addEventListener('click', () => {
+    document.getElementById('deathScreen').classList.add('hidden');
+    document.getElementById('mainMenu').classList.remove('hidden');
 });
 
-// Показываем кнопку "Заново" после смерти игрока
-const restartBtn = document.getElementById("restart-btn");
-
-function endGame() {
-    // Логика окончания игры
-    // Показываем кнопку "Заново"
-    restartBtn.style.display = "block"; 
-}
-
-// Логика для кнопки "Заново", чтобы начать игру заново
-restartBtn.addEventListener("click", function() {
-    restartGame(); // Начинаем новую игру
+// Запуск интро
+document.getElementById('skipIntro').addEventListener('click', () => {
+    document.getElementById('introScreen').classList.add('hidden');
+    document.getElementById('mainMenu').classList.remove('hidden');
 });
 
-// Начать игру
-// Запуск игры
-document.getElementById("start-btn").addEventListener("click", startGame);
-
-function startGame() {
-    document.getElementById("intro-screen").classList.add("hidden");
-    document.getElementById("game-screen").classList.remove("hidden");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    updateGameArea();
-}
+document.getElementById('introVideo').addEventListener('ended', () => {
+    document.getElementById('introScreen').classList.add('hidden');
+    document.getElementById('mainMenu').classList.remove('hidden');
+});
