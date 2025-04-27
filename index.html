@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Эпик Игра</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Начальная заставка -->
+    <div id="intro-screen" class="screen">
+        <img src="assets/backgrounds/intro_background.jpg" alt="Заставка">
+        <div id="intro-text">
+            <h1>На нас напали монстры!</h1>
+            <p>Наши фаддеры и сибилы требуют тебя!</p>
+            <button id="start-btn">Играть</button>
+        </div>
+    </div>
+
+    <!-- Игровой экран -->
+    <div id="game-screen" class="screen hidden">
+        <canvas id="gameCanvas"></canvas>
+        <div id="game-ui">
+            <button id="restart-btn">Заново</button>
+            <div id="leaderboard">
+                <h2>Лидерборд</h2>
+                <ul id="leaderboard-list">
+                    <!-- Лидерборд будет заполнен через JS -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
