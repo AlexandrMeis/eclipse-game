@@ -1,107 +1,76 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+let gameLoopID = null;
 
-// Конфигурация
+// Настройки
 const CONFIG = {
-    SCALE: 2,
-    PLAYER_WIDTH: 80,
-    PLAYER_HEIGHT: 120,
-    ENEMY_SIZE: 100,
-    GRAVITY: 0.85,
-    JUMP_FORCE: -25,
+    PLAYER_WIDTH: 60,
+    PLAYER_HEIGHT: 90,
+    ENEMY_SIZE: 50,
+    GRAVITY: 0.8,
+    JUMP_FORCE: -15,
     SPAWN_INTERVAL: 2000
 };
 
+// Состояние игры
 let gameState = {
-    player: null,
-    enemies: [],
-    isGameActive: false,
-    keys: { a: false, d: false, w: false }
-};
-
-// Ресурсы
-const assets = {
-    images: {
-        knightIdle: new Image(),
-        knightAttack: new Image(),
-        knightJump: new Image(),
-        fudder: new Image(),
-        sybil: new Image(),
-        farmer: new Image(),
-        stone: new Image(),
-        heart: new Image()
+    player: {
+        x: 400,
+        y: 500,
+        health: 3,
+        score: 0,
+        yVelocity: 0,
+        isAttacking: false,
+        isJumping: false
     },
-    audio: {
-        attack: new Audio('assets/audio/attack_sound.wav'),
-        jump: new Audio('assets/audio/jump_sound.wav')
-    }
+    enemies: [],
+    platforms: [
+        {x: 0, y: 600, width: 200, height: 50}
+    ],
+    lastSpawn: 0
 };
-
-// Инициализация игры
-function initGame() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    gameState = {
-        player: {
-            x: canvas.width/2 - (CONFIG.PLAYER_WIDTH * CONFIG.SCALE)/2,
-            y: canvas.height - 300,
-            width: CONFIG.PLAYER_WIDTH * CONFIG.SCALE,
-            height: CONFIG.PLAYER_HEIGHT * CONFIG.SCALE,
-            health: 3,
-            score: 0,
-            yVelocity: 0,
-            isAttacking: false
-        },
-        enemies: [],
-        lastSpawn: 0,
-        isGameActive: true
-    };
-}
 
 // Загрузка ресурсов
-async function loadResources() {
-    const images = Object.values(assets.images);
-    
-    // Пути к изображениям
-    assets.images.knightIdle.src = 'assets/characters/knight_idle.png';
-    assets.images.knightAttack.src = 'assets/characters/knight_attack.png';
-    assets.images.knightJump.src = 'assets/characters/knight_jump.png';
-    assets.images.fudder.src = 'assets/characters/fudder_enemy.png';
-    assets.images.sybil.src = 'assets/characters/sybil_enemy.png';
-    assets.images.farmer.src = 'assets/characters/farmer_enemy.png';
-    assets.images.stone.src = 'assets/objects/stone_platform.png';
-    assets.images.heart.src = 'assets/ui/heart_icon.png';
+const images = {
+    knightIdle: new Image(),
+    knightAttack: new Image(),
+    fudder: new Image(),
+    sybil: new Image(),
+    farmer: new Image()
+};
 
-    // Ожидание загрузки
-    await Promise.all([
-        ...images.map(img => new Promise(resolve => {
-            img.onload = resolve;
-            img.onerror = () => console.error(`Ошибка: ${img.src}`);
-        })),
-        new Promise(resolve => {
-            assets.audio.attack.onloadeddata = resolve;
-            assets.audio.jump.onloadeddata = resolve;
-        })
-    ]);
-}
+images.knightIdle.src = 'assets/characters/knight_idle.png';
+images.knightAttack.src = 'assets/characters/knight_attack.png';
+images.fudder.src = 'assets/characters/fudder_enemy.png';
+images.sybil.src = 'assets/characters/sybil_enemy.png';
+images.farmer.src = 'assets/characters/farmer_enemy.png';
 
-// Игровой цикл
-function gameLoop() {
-    if (!gameState.isGameActive) return;
+// Управление
+const keys = { a: false, d: false, w: false };
 
-    // Обновление
-    if (gameState.keys.a) gameState.player.x -= 5;
-    if (gameState.keys.d) gameState.player.x += 5;
-    gameState.player.x = Math.max(0, Math.min(
-        canvas.width - gameState.player.width, 
-        gameState.player.x
-    ));
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'a') keys.a = true;
+    if (e.key === 'd') keys.d = true;
+    if (e.key === 'w' || e.key === ' ') keys.w = true;
+});
+
+document.addEventListener('keyup', (e) => {
+    if (e.key === 'a') keys.a = false;
+    if (e.key === 'd') keys.d = false;
+    if (e.key === 'w' || e.key === ' ') keys.w = false;
+});
+
+// Основная логика
+function update() {
+    // Движение
+    if (keys.a) gameState.player.x -= 5;
+    if (keys.d) gameState.player.x += 5;
+    gameState.player.x = Math.max(0, Math.min(canvas.width - 60, gameState.player.x));
 
     // Прыжок
-    if (gameState.keys.w && isGrounded()) {
-        gameState.player.yVelocity = CONFIG.JUMP_FORCE * CONFIG.SCALE;
-        assets.audio.jump.play();
+    if (keys.w && isGrounded()) {
+        gameState.player.yVelocity = CONFIG.JUMP_FORCE;
+        document.getElementById('jumpSound').play();
     }
 
     // Гравитация
@@ -114,51 +83,43 @@ function gameLoop() {
         gameState.lastSpawn = Date.now();
     }
 
-    // Коллизии
     checkCollisions();
+}
 
-    // Отрисовка
+function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    // Платформы
+    ctx.fillStyle = '#654321';
+    gameState.platforms.forEach(plat => {
+        ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
+    });
+
     // Игрок
-    const img = gameState.player.isAttacking 
-        ? assets.images.knightAttack 
-        : assets.images.knightIdle;
-    
     ctx.drawImage(
-        img,
+        gameState.player.isAttacking ? images.knightAttack : images.knightIdle,
         gameState.player.x,
         gameState.player.y,
-        gameState.player.width,
-        gameState.player.height
+        CONFIG.PLAYER_WIDTH,
+        CONFIG.PLAYER_HEIGHT
     );
 
     // Враги
     gameState.enemies.forEach(enemy => {
-        ctx.drawImage(
-            assets.images[enemy.type],
-            enemy.x,
-            enemy.y,
-            enemy.width,
-            enemy.height
-        );
+        ctx.drawImage(images[enemy.type], enemy.x, enemy.y, CONFIG.ENEMY_SIZE, CONFIG.ENEMY_SIZE);
     });
-
-    requestAnimationFrame(gameLoop);
 }
 
-// Остальные функции
+// Вспомогательные функции
 function spawnEnemy() {
     const types = ['fudder', 'sybil', 'farmer'];
     const side = Math.random() > 0.5 ? 'left' : 'right';
     
     gameState.enemies.push({
-        x: side === 'left' ? -100 : canvas.width + 100,
-        y: canvas.height - 200,
+        x: side === 'left' ? -50 : canvas.width + 50,
+        y: 500,
         type: types[Math.floor(Math.random() * 3)],
-        speed: side === 'left' ? 3 : -3,
-        width: CONFIG.ENEMY_SIZE * CONFIG.SCALE,
-        height: CONFIG.ENEMY_SIZE * CONFIG.SCALE
+        speed: side === 'left' ? 2 : -2
     });
 }
 
@@ -169,7 +130,7 @@ function checkCollisions() {
                 gameState.enemies.splice(index, 1);
                 gameState.player.score++;
                 document.getElementById('score').textContent = `Убито: ${gameState.player.score}`;
-                assets.audio.attack.play();
+                document.getElementById('attackSound').play();
             } else {
                 gameState.player.health--;
                 updateHearts();
@@ -180,14 +141,14 @@ function checkCollisions() {
 }
 
 function isColliding(a, b) {
-    return a.x < b.x + b.width &&
-           a.x + a.width > b.x &&
-           a.y < b.y + b.height &&
-           a.y + a.height > b.y;
+    return a.x < b.x + CONFIG.ENEMY_SIZE &&
+           a.x + CONFIG.PLAYER_WIDTH > b.x &&
+           a.y < b.y + CONFIG.ENEMY_SIZE &&
+           a.y + CONFIG.PLAYER_HEIGHT > b.y;
 }
 
 function isGrounded() {
-    return gameState.player.y >= canvas.height - 200;
+    return gameState.player.y + CONFIG.PLAYER_HEIGHT >= 600;
 }
 
 function updateHearts() {
@@ -195,63 +156,38 @@ function updateHearts() {
     healthDiv.innerHTML = '';
     for (let i = 0; i < gameState.player.health; i++) {
         const img = new Image();
-        img.src = assets.images.heart.src;
+        img.src = 'assets/ui/heart_icon.png';
         img.className = 'heart-icon';
         healthDiv.appendChild(img);
     }
 }
 
 function gameOver() {
-    gameState.isGameActive = false;
+    cancelAnimationFrame(gameLoopID);
     document.getElementById('gameScreen').classList.add('hidden');
     document.getElementById('deathScreen').classList.remove('hidden');
     document.getElementById('finalName').textContent = 
-        document.getElementById('playerName').value;
+        document.getElementById('playerName').value.trim();
     document.getElementById('finalScore').textContent = gameState.player.score;
 }
 
 // Обработчики событий
-document.addEventListener('keydown', e => {
-    if (!gameState.isGameActive) return;
-    const key = e.key.toLowerCase();
-    gameState.keys[key] = true;
-});
-
-document.addEventListener('keyup', e => {
-    if (!gameState.isGameActive) return;
-    const key = e.key.toLowerCase();
-    gameState.keys[key] = false;
-});
-
-canvas.addEventListener('click', () => {
-    if (!gameState.isGameActive || gameState.player.isAttacking) return;
-    gameState.player.isAttacking = true;
-    setTimeout(() => gameState.player.isAttacking = false, 300);
-});
-
-// Запуск игры
-document.getElementById('startGame').addEventListener('click', async () => {
+document.getElementById('startGame').addEventListener('click', () => {
     const name = document.getElementById('playerName').value.trim();
-    if (!name) return alert('Введите ник!');
+    if (name.length < 3) return alert('Ник должен быть от 3 символов!');
     
-    document.getElementById('startGame').style.pointerEvents = 'none';
-    document.getElementById('preloader').classList.remove('hidden');
-    
-    await loadResources();
-    
-    document.getElementById('preloader').classList.add('hidden');
     document.getElementById('mainMenu').classList.add('hidden');
     document.getElementById('gameScreen').classList.remove('hidden');
-    
-    initGame();
+    gameState.player.health = 3;
+    gameState.player.score = 0;
+    gameState.enemies = [];
     updateHearts();
-    gameLoop();
+    gameLoopID = requestAnimationFrame(gameLoop);
 });
 
 document.getElementById('newGame').addEventListener('click', () => {
     document.getElementById('deathScreen').classList.add('hidden');
     document.getElementById('mainMenu').classList.remove('hidden');
-    document.getElementById('startGame').style.pointerEvents = 'auto';
 });
 
 document.getElementById('skipIntro').addEventListener('click', () => {
@@ -259,10 +195,18 @@ document.getElementById('skipIntro').addEventListener('click', () => {
     document.getElementById('mainMenu').classList.remove('hidden');
 });
 
+// Инициализация
+canvas.width = 1024;
+canvas.height = 768;
+
 // Автозапуск
-window.onload = () => {
-    document.getElementById('introVideo').play().catch(() => {
-        document.getElementById('introScreen').classList.add('hidden');
-        document.getElementById('mainMenu').classList.remove('hidden');
-    });
-};
+document.getElementById('introVideo').play().catch(() => {
+    document.getElementById('introScreen').classList.add('hidden');
+    document.getElementById('mainMenu').classList.remove('hidden');
+});
+
+function gameLoop() {
+    update();
+    draw();
+    gameLoopID = requestAnimationFrame(gameLoop);
+}
