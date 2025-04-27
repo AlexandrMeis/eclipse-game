@@ -4,31 +4,49 @@ let gameLoopID = null;
 
 // Настройки
 const CONFIG = {
-    PLAYER_WIDTH: 60,
-    PLAYER_HEIGHT: 90,
-    ENEMY_SIZE: 50,
+    PLAYER_WIDTH: 80,
+    PLAYER_HEIGHT: 120,
+    ENEMY_SIZE: 60,
+    PLATFORM_HEIGHT: 40,
     GRAVITY: 0.8,
-    JUMP_FORCE: -15,
-    SPAWN_INTERVAL: 2000
+    JUMP_FORCE: -20,
+    SPAWN_INTERVAL: 1500,
+    ENEMY_SPEED: 3
 };
 
 // Состояние игры
 let gameState = {
-    player: {
-        x: 400,
-        y: 500,
+    player: null,
+    enemies: [],
+    platform: null,
+    lastSpawn: 0
+};
+
+// Инициализация размеров
+function initGameSize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Большая платформа во весь экран
+    gameState.platform = {
+        x: 0,
+        y: canvas.height - CONFIG.PLATFORM_HEIGHT,
+        width: canvas.width,
+        height: CONFIG.PLATFORM_HEIGHT
+    };
+    
+    // Игрок по центру
+    gameState.player = {
+        x: canvas.width/2 - CONFIG.PLAYER_WIDTH/2,
+        y: canvas.height - CONFIG.PLATFORM_HEIGHT - CONFIG.PLAYER_HEIGHT,
+        width: CONFIG.PLAYER_WIDTH,
+        height: CONFIG.PLAYER_HEIGHT,
         health: 3,
         score: 0,
         yVelocity: 0,
-        isAttacking: false,
-        isJumping: false
-    },
-    enemies: [],
-    platforms: [
-        {x: 0, y: 600, width: 200, height: 50}
-    ],
-    lastSpawn: 0
-};
+        isAttacking: false
+    };
+}
 
 // Загрузка ресурсов
 const images = {
@@ -36,7 +54,8 @@ const images = {
     knightAttack: new Image(),
     fudder: new Image(),
     sybil: new Image(),
-    farmer: new Image()
+    farmer: new Image(),
+    platform: new Image()
 };
 
 images.knightIdle.src = 'assets/characters/knight_idle.png';
@@ -44,6 +63,7 @@ images.knightAttack.src = 'assets/characters/knight_attack.png';
 images.fudder.src = 'assets/characters/fudder_enemy.png';
 images.sybil.src = 'assets/characters/sybil_enemy.png';
 images.farmer.src = 'assets/characters/farmer_enemy.png';
+images.platform.src = 'assets/objects/stone_platform.png';
 
 // Управление
 const keys = { a: false, d: false, w: false };
@@ -62,10 +82,13 @@ document.addEventListener('keyup', (e) => {
 
 // Основная логика
 function update() {
-    // Движение
+    // Движение игрока
     if (keys.a) gameState.player.x -= 5;
     if (keys.d) gameState.player.x += 5;
-    gameState.player.x = Math.max(0, Math.min(canvas.width - 60, gameState.player.x));
+    gameState.player.x = Math.max(0, Math.min(
+        canvas.width - CONFIG.PLAYER_WIDTH, 
+        gameState.player.x
+    ));
 
     // Прыжок
     if (keys.w && isGrounded()) {
@@ -83,17 +106,30 @@ function update() {
         gameState.lastSpawn = Date.now();
     }
 
+    // Движение врагов
+    gameState.enemies.forEach(enemy => {
+        const dx = gameState.player.x - enemy.x;
+        const dy = gameState.player.y - enemy.y;
+        const distance = Math.sqrt(dx*dx + dy*dy);
+        
+        enemy.x += (dx/distance) * CONFIG.ENEMY_SPEED;
+        enemy.y += (dy/distance) * CONFIG.ENEMY_SPEED;
+    });
+
     checkCollisions();
 }
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Платформы
-    ctx.fillStyle = '#654321';
-    gameState.platforms.forEach(plat => {
-        ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
-    });
+    // Платформа
+    ctx.drawImage(
+        images.platform,
+        gameState.platform.x,
+        gameState.platform.y,
+        gameState.platform.width,
+        gameState.platform.height
+    );
 
     // Игрок
     ctx.drawImage(
@@ -106,49 +142,57 @@ function draw() {
 
     // Враги
     gameState.enemies.forEach(enemy => {
-        ctx.drawImage(images[enemy.type], enemy.x, enemy.y, CONFIG.ENEMY_SIZE, CONFIG.ENEMY_SIZE);
+        ctx.drawImage(
+            images[enemy.type],
+            enemy.x,
+            enemy.y,
+            CONFIG.ENEMY_SIZE,
+            CONFIG.ENEMY_SIZE
+        );
     });
 }
 
 // Вспомогательные функции
 function spawnEnemy() {
     const types = ['fudder', 'sybil', 'farmer'];
-    const side = Math.random() > 0.5 ? 'left' : 'right';
+    const angle = Math.random() * Math.PI * 2;
+    const radius = Math.max(canvas.width, canvas.height) * 0.6;
     
     gameState.enemies.push({
-        x: side === 'left' ? -50 : canvas.width + 50,
-        y: 500,
-        type: types[Math.floor(Math.random() * 3)],
-        speed: side === 'left' ? 2 : -2
+        x: gameState.player.x + Math.cos(angle) * radius,
+        y: gameState.player.y + Math.sin(angle) * radius,
+        type: types[Math.floor(Math.random() * 3)]
     });
 }
 
+function isGrounded() {
+    return gameState.player.y + CONFIG.PLAYER_HEIGHT >= 
+        gameState.platform.y - 5;
+}
+
 function checkCollisions() {
-    gameState.enemies.forEach((enemy, index) => {
-        if (isColliding(gameState.player, enemy)) {
+    gameState.enemies = gameState.enemies.filter(enemy => {
+        const collision = (
+            enemy.x < gameState.player.x + CONFIG.PLAYER_WIDTH &&
+            enemy.x + CONFIG.ENEMY_SIZE > gameState.player.x &&
+            enemy.y < gameState.player.y + CONFIG.PLAYER_HEIGHT &&
+            enemy.y + CONFIG.ENEMY_SIZE > gameState.player.y
+        );
+        
+        if (collision) {
             if (gameState.player.isAttacking) {
-                gameState.enemies.splice(index, 1);
                 gameState.player.score++;
                 document.getElementById('score').textContent = `Убито: ${gameState.player.score}`;
                 document.getElementById('attackSound').play();
+                return false; // Удаляем врага
             } else {
                 gameState.player.health--;
                 updateHearts();
                 if (gameState.player.health <= 0) gameOver();
             }
         }
+        return true;
     });
-}
-
-function isColliding(a, b) {
-    return a.x < b.x + CONFIG.ENEMY_SIZE &&
-           a.x + CONFIG.PLAYER_WIDTH > b.x &&
-           a.y < b.y + CONFIG.ENEMY_SIZE &&
-           a.y + CONFIG.PLAYER_HEIGHT > b.y;
-}
-
-function isGrounded() {
-    return gameState.player.y + CONFIG.PLAYER_HEIGHT >= 600;
 }
 
 function updateHearts() {
@@ -176,12 +220,11 @@ document.getElementById('startGame').addEventListener('click', () => {
     const name = document.getElementById('playerName').value.trim();
     if (name.length < 3) return alert('Ник должен быть от 3 символов!');
     
+    initGameSize();
+    updateHearts();
+    
     document.getElementById('mainMenu').classList.add('hidden');
     document.getElementById('gameScreen').classList.remove('hidden');
-    gameState.player.health = 3;
-    gameState.player.score = 0;
-    gameState.enemies = [];
-    updateHearts();
     gameLoopID = requestAnimationFrame(gameLoop);
 });
 
@@ -196,8 +239,8 @@ document.getElementById('skipIntro').addEventListener('click', () => {
 });
 
 // Инициализация
-canvas.width = 1024;
-canvas.height = 768;
+initGameSize();
+window.addEventListener('resize', initGameSize);
 
 // Автозапуск
 document.getElementById('introVideo').play().catch(() => {
