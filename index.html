@@ -6,29 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <!-- Прелоадер -->
-    <div id="preloader">
-        <div id="loadingBar"></div>
-        <div id="countdown">5</div>
-    </div>
-
-    <!-- Интро -->
+    <!-- Видео интро -->
     <div id="introScreen">
         <video id="introVideo" muted>
             <source src="assets/videos/intro_video.mp4" type="video/mp4">
         </video>
-        <button id="skipIntro">Пропустить</button>
+        <button id="skipIntro">Пропустить ▶</button>
     </div>
 
-    <!-- Меню -->
+    <!-- Главное меню -->
     <div id="mainMenu" class="hidden">
         <input type="text" id="playerName" placeholder="Введите ваш ник">
-        <div class="menu-buttons">
-            <img src="assets/ui/play_button.png" id="startGame" class="menu-button">
-        </div>
+        <img src="assets/ui/play_button.png" id="startGame" class="menu-button">
     </div>
 
-    <!-- Игра -->
+    <!-- Прелоадер -->
+    <div id="preloader" class="hidden">
+        <div id="loadingBar"></div>
+        <div id="countdown">5</div>
+    </div>
+
+    <!-- Игровой экран -->
     <div id="gameScreen" class="hidden">
         <canvas id="gameCanvas"></canvas>
         <div id="ui">
@@ -37,7 +35,7 @@
         </div>
     </div>
 
-    <!-- Смерть -->
+    <!-- Экран смерти -->
     <div id="deathScreen" class="hidden">
         <h2>Игрок: <span id="finalName"></span></h2>
         <p>Убито врагов: <span id="finalScore">0</span></p>
