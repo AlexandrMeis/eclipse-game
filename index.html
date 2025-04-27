@@ -10,25 +10,40 @@
     <!-- Начальная заставка -->
     <div id="intro-screen" class="screen">
         <img src="assets/backgrounds/intro_background.jpg" alt="Заставка">
-        <div id="intro-text">
-            <h1>На нас напали монстры!</h1>
-            <p>Наши фаддеры и сибилы требуют тебя!</p>
-            <button id="start-btn">Играть</button>
-        </div>
+        <button id="start-btn">
+            <img src="ui/btn_play.png" alt="Старт">
+        </button>
     </div>
 
     <!-- Игровой экран -->
     <div id="game-screen" class="screen hidden">
         <canvas id="gameCanvas"></canvas>
         <div id="game-ui">
-            <button id="restart-btn">Заново</button>
+            <button id="restart-btn" style="display: none;">
+                <img src="ui/btn_restart.png" alt="Заново">
+            </button>
             <div id="leaderboard">
-                <h2>Лидерборд</h2>
+                <img src="ui/leaderboard_bg.png" alt="Лидерборд" style="width: 300px;">
                 <ul id="leaderboard-list">
                     <!-- Лидерборд будет заполнен через JS -->
                 </ul>
             </div>
         </div>
+    </div>
+
+    <!-- Лидерборд (добавляем скрытый элемент для отображения результата) -->
+    <div id="leaderboard-end" style="display: none;">
+        <img src="ui/leaderboard_bg.png" alt="Лидерборд" style="width: 300px;">
+        <p id="scoreDisplay"></p>
+        <button id="restartButton">Новая игра</button>
+    </div>
+
+    <!-- Экран начала игры (для правильного отображения кнопки Start) -->
+    <div id="start-screen" class="screen">
+        <img src="assets/backgrounds/intro_background.jpg" alt="Начальная заставка">
+        <button id="start-btn">
+            <img src="ui/btn_play.png" alt="Старт">
+        </button>
     </div>
 
     <script src="script.js"></script>

@@ -59,13 +59,9 @@ body {
     color: white;
 }
 
-#restart-btn {
-    background-color: #ff8000;
-    color: white;
-    padding: 10px;
-    font-size: 18px;
-    cursor: pointer;
-    border: none;
+#restart-btn img {
+    width: 100%; /* Устанавливаем, чтобы изображение растягивалось по кнопке */
+    height: auto; /* Поддерживаем пропорции изображения */
 }
 
 /* Лидерборд */
@@ -73,6 +69,11 @@ body {
     margin-top: 30px;
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.5);
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
 }
 
 #leaderboard-list {
@@ -82,4 +83,13 @@ body {
 
 #leaderboard-list li {
     padding: 5px;
+}
+
+#startMenu {
+    width: 100%;
+    height: 100vh;
+    background: url('backgrounds/intro_background.jpg') no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

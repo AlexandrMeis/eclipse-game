@@ -65,5 +65,38 @@ function startGame() {
     updateGameArea();
 }
 
+function endGame() {
+    document.getElementById('leaderboard').style.display = 'block';
+    document.getElementById('scoreDisplay').innerText = "Ты убил " + killCount + " врагов!";
+}
+
+document.getElementById('restartButton').addEventListener('click', function() {
+    window.location.reload(); // перезагрузка страницы для новой игры
+});
+
+/ Показываем кнопку старт на начальной заставке
+const startScreen = document.getElementById("start-screen");
+const startBtn = document.getElementById("start-btn");
+
+// При нажатии на кнопку старт скрываем стартовый экран и начинаем игру
+startBtn.addEventListener("click", function() {
+    startScreen.style.display = "none"; // Скрываем экран старта
+    startGame(); // Запускаем игру
+});
+
+// Показываем кнопку "Заново" после смерти игрока
+const restartBtn = document.getElementById("restart-btn");
+
+function endGame() {
+    // Логика окончания игры
+    // Показываем кнопку "Заново"
+    restartBtn.style.display = "block"; 
+}
+
+// Логика для кнопки "Заново", чтобы начать игру заново
+restartBtn.addEventListener("click", function() {
+    restartGame(); // Начинаем новую игру
+});
+
 // Начать игру
 document.getElementById("start-btn").onclick = startGame;
