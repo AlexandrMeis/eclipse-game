@@ -1,40 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Eclipse Knight</title>
+    <meta charset="UTF-8">
+    <title>Knights vs FUDlings</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <div id="introScreen">
-        <video id="introVideo" muted>
-            <source src="assets/videos/intro_video.mp4" type="video/mp4">
-        </video>
-        <button id="skipIntro">▶ Пропустить</button>
-    </div>
 
-    <div id="mainMenu" class="hidden">
-        <input type="text" id="playerName" placeholder="Введите ваш ник (мин. 3 символа)">
-        <img src="assets/ui/play_button.png" id="startGame" class="menu-button">
-    </div>
+<div id="game-container">
+    <canvas id="game-canvas" width="1280" height="720"></canvas>
+</div>
 
-    <div id="gameScreen" class="hidden">
-        <canvas id="gameCanvas"></canvas>
-        <div id="ui">
-            <div id="health"></div>
-            <div id="score">Убито: 0</div>
-        </div>
-    </div>
-
-    <div id="deathScreen" class="hidden">
-        <h2>Игрок: <span id="finalName"></span></h2>
-        <p>Убито врагов: <span id="finalScore">0</span></p>
-        <img src="assets/ui/newgame_button.png" id="newGame" class="menu-button">
-    </div>
-
-    <audio id="attackSound" src="assets/audio/attack_sound.wav"></audio>
-    <audio id="jumpSound" src="assets/audio/jump_sound.wav"></audio>
-
-    <script src="script.js"></script>
+<script src="game.js"></script>
 </body>
 </html>

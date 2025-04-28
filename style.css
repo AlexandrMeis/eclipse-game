@@ -1,139 +1,21 @@
-* {
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-body {
+    background-color: #000;
     overflow: hidden;
-    font-family: 'Arial', sans-serif;
-    background: #000;
-    color: white;
 }
 
-#introScreen {
-    position: fixed;
+#game-container {
     width: 100vw;
     height: 100vh;
-    z-index: 1000;
-    background: black;
-}
-
-#introVideo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-#skipIntro {
-    position: absolute;
-    top: 25px;
-    right: 25px;
-    padding: 12px 25px;
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    cursor: pointer;
-    border-radius: 30px;
-    font-size: 16px;
-    transition: all 0.3s;
-}
-
-#skipIntro:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: scale(1.05);
-}
-
-.hidden {
-    display: none !important;
-}
-
-#mainMenu {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-}
-
-#playerName {
-    display: block;
-    margin: 25px auto;
-    padding: 15px 30px;
-    width: 280px;
-    font-size: 18px;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 35px;
-    outline: none;
-}
-
-.menu-button {
-    width: 260px;
-    cursor: pointer;
-    transition: transform 0.3s;
-    margin: 15px 0;
-}
-
-.menu-button:hover {
-    transform: scale(1.08);
-}
-
-#gameCanvas {
-    width: 100vw;
-    height: 100vh;
-    background: url('assets/backgrounds/game_background.jpg') no-repeat center/cover;
-}
-
-#ui {
-    position: fixed;
-    top: 25px;
-    left: 25px;
+    background-image: url('assets/backgrounds/castle_background.jpg');
+    background-size: cover;
+    background-position: center;
     display: flex;
-    gap: 20px;
     align-items: center;
-    padding: 15px 25px;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 15px;
+    justify-content: center;
 }
 
-#health {
-    display: flex;
-    gap: 10px;
-}
-
-.heart-icon {
-    width: 40px;
-    height: 40px;
-    filter: drop-shadow(0 0 8px #ff0000);
-}
-
-#score {
-    font-size: 24px;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-#deathScreen {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.95);
-    padding: 40px 60px;
-    border-radius: 20px;
-    text-align: center;
-    border: 2px solid #00ff88;
-    box-shadow: 0 0 40px rgba(0, 255, 136, 0.3);
-}
-
-@media (max-width: 768px) {
-    #playerName {
-        width: 80%;
-        max-width: 300px;
-    }
-    
-    .menu-button {
-        width: 80%;
-        max-width: 250px;
-    }
+#game-canvas {
+    background-color: transparent;
 }
