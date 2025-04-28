@@ -1,35 +1,28 @@
-const canvas = document.getElementById('game-canvas');
+// Получаем элемент canvas
+const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Загружаем картинки юнитов
-const knightImage = new Image();
-knightImage.src = 'assets/knights/knight_sword.png';
+// Загружаем фон
+const background = new Image();
+background.src = 'assets/backgrounds/castle_background.jpg'; // путь к фону
 
-const fudlingImage = new Image();
-fudlingImage.src = 'assets/fudlings/fudling_small.png';
+// Загружаем рыцаря
+const knight = new Image();
+knight.src = 'assets/knights/knight_idle.png'; // путь к изображению рыцаря
 
-let imagesLoaded = 0;
-const totalImages = 2;
+// Загружаем врага
+const enemy = new Image();
+enemy.src = 'assets/characters/farmer_enemy.png'; // путь к изображению врага
 
-// Массивы для юнитов
-const knights = [];
-const fudlings = [];
+// Когда все изображения загружены, рисуем их
+background.onload = function () {
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height); // рисуем фон
 
-// Позиции тестовых юнитов
-knights.push({ x: 200, y: 300, img: knightImage });
-fudlings.push({ x: 800, y: 300, img: fudlingImage });
+    knight.onload = function () {
+        ctx.drawImage(knight, 100, canvas.height - 150, 100, 150); // рисуем рыцаря
+    };
 
-// Функция, которая проверяет, что все изображения загрузились
-function checkImagesLoaded() {
-    imagesLoaded++;
-    if (imagesLoaded === totalImages) {
-        gameLoop(); // Начинаем игру, когда все изображения загружены
-    }
-}
-
-knightImage.onload = checkImagesLoaded;
-fudlingImage.onload = checkImagesLoaded;
-
-// Основной игровой цикл
-function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, can
+    enemy.onload = function () {
+        ctx.drawImage(enemy, canvas.width - 200, canvas.height - 150, 100, 150); // рисуем врага
+    };
+};
